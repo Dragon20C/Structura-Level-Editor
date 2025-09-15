@@ -3,14 +3,12 @@ extends Control
 class_name StructuraEditor
 
 @export_group("Node Requirements")
-
+@export var level_data : LevelData
 var grid_size : int = 16
 var world_unit_scale : int = 10
 
 @export var viewport : GraphViewport
-
-func _ready() -> void:
-	viewport.set_editor(self)
+var selected_mesh : GraphMesh
 
 
 # From drawing to world units

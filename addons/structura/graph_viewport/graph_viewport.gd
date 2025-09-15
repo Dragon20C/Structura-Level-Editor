@@ -14,7 +14,7 @@ const AXIS_COLORS = {
 @export var grid_line_color : Color = Color(0.4,0.4,0.4)
 @export var coordinates : Coordinates
 
-var _editor : StructuraEditor
+@export var _editor : StructuraEditor
 var _camera_position : Vector2 = Vector2.ZERO
 var _zoom : float = 1.0
 var _is_panning : bool = false
@@ -46,6 +46,7 @@ func _gui_input(event: InputEvent) -> void:
 
 func _draw() -> void:
 	draw_graph()
+	draw_meshes()
 
 # A simple function for updating the whole viewport
 func refresh() -> void:
@@ -64,10 +65,6 @@ func set_zoom(new_zoom: float, pivot: Vector2 = get_local_mouse_position()) -> v
 
 	# Adjust camera so the mouse stays on the same world spot
 	_camera_position += (world_before - world_after)
-
-
-func set_editor(editor : StructuraEditor) -> void:
-	_editor = editor
 
 func draw_graph() -> void:
 	var world_min = _editor.to_world(Vector2.ZERO, _camera_position, _zoom)
@@ -114,6 +111,45 @@ func draw_graph() -> void:
 	#hoizontal line
 	if origin.y > 0 and origin.y < size.y:
 		draw_line(Vector2(0,origin.y),Vector2(size.x,origin.y),AXIS_COLORS[horiz_axis],2.0)
+
+func draw_meshes() -> void:
+	for mesh in _editor.level_data.data:
+		
+		var rect : Rect2
+		
+		match orientation:
+			Orientations.TOP:
+				rect = mesh.get_top_view_rect()
+			Orientations.SIDE:
+				rect = mesh.get_side_view_rect()
+			Orientations.FRONT:
+				rect = mesh.get_front_view_rect()
+		
+		# Top-left and bottom-right corners in world space
+		var p1 = rect.position
+		var p2 = rect.position + rect.size
+		
+		# Convert to screen space
+		var s1 = _editor.to_screen(p1, _camera_position, _zoom)
+		var s2 = _editor.to_screen(p2, _camera_position, _zoom)
+		
+		# To avoid drawing off screen
+		if s1.x < 0 or s1.y < 0:
+			continue
+		
+		# Build rect from transformed corners
+		var screen_rect = Rect2(s1, s2 - s1).abs()
+		
+		# coloring
+		var fill_color = Color(0.7, 0.7, 0.7, 0.3)
+		var outline_color = Color(0.9, 0.9, 0.9)
+		if mesh == _editor.selected_mesh:
+			fill_color = Color(0.2, 0.6, 1.0, 0.3)
+			outline_color = Color(0.2, 0.6, 1.0)
+		
+		draw_rect(screen_rect, fill_color, true)
+		draw_rect(screen_rect, outline_color, false)
+
 
 func get_orientation_axes() -> Array[String]:
 	match orientation:

@@ -4,7 +4,7 @@ class_name Coordinates
 
 @export var editor : StructuraEditor
 @export var viewport : GraphViewport
-@export var max_pool_size : int = 125
+@export var max_pool_size : int = 64 # Might need to increase this number for higher screen resolutions
 @export var position_offset : Vector2 = Vector2.ONE
 @export var font : Font
 @export var font_size : int = 14
