@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dt3a1saa4gfd7"]
+
+[ext_resource type="Script" uid="uid://c5etow500jhm7" path="res://addons/graph_editor/graph_viewport/graph_viewport.gd" id="1_hs8kc"]
+
+[node name="GraphViewport" type="ColorRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_hs8kc")
