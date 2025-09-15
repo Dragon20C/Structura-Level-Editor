@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3 uid="uid://bgilkp0xevdll"]
+
+[ext_resource type="Script" uid="uid://s2grr1g5wylc" path="res://addons/structura/editor/structura_editor.gd" id="1_wwam6"]
+[ext_resource type="Script" uid="uid://bie1sp8h3dmc8" path="res://addons/structura/graph_viewport/graph_viewport.gd" id="2_6cu81"]
+[ext_resource type="Script" uid="uid://dj43u5rb141sg" path="res://addons/structura/Coordinates/coordinates.gd" id="3_eltl8"]
+[ext_resource type="FontFile" uid="uid://gpkexih8ki4e" path="res://addons/structura/assets/font/DIN.ttf" id="4_vi1xm"]
+
+[node name="StructuraEditor" type="Control" node_paths=PackedStringArray("viewport")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_wwam6")
+viewport = NodePath("GridContainer/GraphViewport")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GraphViewport" type="ColorRect" parent="GridContainer" node_paths=PackedStringArray("coordinates")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.0189439, 0.0989648, 0.185043, 1)
+script = ExtResource("2_6cu81")
+grid_line_color = Color(0.330702, 0.399238, 0.542666, 1)
+coordinates = NodePath("Coordinates")
+
+[node name="Coordinates" type="Control" parent="GridContainer/GraphViewport" node_paths=PackedStringArray("editor", "viewport")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_eltl8")
+editor = NodePath("../../..")
+viewport = NodePath("..")
+position_offset = Vector2(-9, -14)
+font = ExtResource("4_vi1xm")
+
+[connection signal="item_rect_changed" from="GridContainer/GraphViewport" to="GridContainer/GraphViewport" method="_on_item_rect_changed"]

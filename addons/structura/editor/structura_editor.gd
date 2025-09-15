@@ -1,0 +1,30 @@
+@tool
+extends Control
+class_name StructuraEditor
+
+@export_group("Node Requirements")
+
+var grid_size : int = 16
+var world_unit_scale : int = 10
+
+@export var viewport : GraphViewport
+
+func _ready() -> void:
+	viewport.set_editor(self)
+
+
+# From drawing to world units
+func to_world(screen_position : Vector2,camera_position : Vector2, zoom : float) -> Vector2:
+	var scaler : float = world_unit_scale * zoom
+	
+	var world_unit : Vector2 = (screen_position / scaler) + camera_position
+	
+	return world_unit
+	
+# from world units to drawing
+func to_screen(world_position : Vector2,camera_position : Vector2, zoom : float) -> Vector2:
+	var scaler : float = world_unit_scale * zoom
+	
+	var screen_unit : Vector2 = (world_position - camera_position) * scaler
+	
+	return screen_unit

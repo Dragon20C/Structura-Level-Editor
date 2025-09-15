@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="GraphData" load_steps=3 format=3 uid="uid://ckicd88ahuhc3"]
-
-[ext_resource type="Script" uid="uid://c5j7slnyowds5" path="res://addons/graph_editor/graph_mesh/graph_mesh.gd" id="1_lqdi4"]
-[ext_resource type="Script" uid="uid://dpkoek1lldl5a" path="res://addons/graph_editor/editor/graph_data.gd" id="2_28lex"]
-
-[resource]
-script = ExtResource("2_28lex")
-data = Array[ExtResource("1_lqdi4")]([])
-metadata/_custom_type_script = "uid://dpkoek1lldl5a"

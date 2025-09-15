@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cjspnc6x1dgm2"]
+
+[ext_resource type="Script" uid="uid://b47vqj2n0sxkx" path="res://addons/structura/camera_controller/camera_controller.gd" id="1_qhwjv"]
+
+[node name="CameraController" type="Camera3D"]
+current = true
+script = ExtResource("1_qhwjv")
