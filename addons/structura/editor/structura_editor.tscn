@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bgilkp0xevdll"]
+[gd_scene load_steps=7 format=3 uid="uid://bgilkp0xevdll"]
 
 [ext_resource type="Script" uid="uid://s2grr1g5wylc" path="res://addons/structura/editor/structura_editor.gd" id="1_wwam6"]
 [ext_resource type="Script" uid="uid://bie1sp8h3dmc8" path="res://addons/structura/graph_viewport/graph_viewport.gd" id="2_6cu81"]
 [ext_resource type="Resource" uid="uid://baf1tslvjaw58" path="res://Level_1Data.tres" id="2_r8jvi"]
 [ext_resource type="Script" uid="uid://dj43u5rb141sg" path="res://addons/structura/Coordinates/coordinates.gd" id="3_eltl8"]
 [ext_resource type="FontFile" uid="uid://gpkexih8ki4e" path="res://addons/structura/assets/font/DIN.ttf" id="4_vi1xm"]
+[ext_resource type="Script" uid="uid://xwcrl1v2abra" path="res://addons/structura/data/tool_system.gd" id="6_xgd66"]
 
 [node name="StructuraEditor" type="Control" node_paths=PackedStringArray("viewport")]
 layout_mode = 3
@@ -37,10 +38,26 @@ grid_line_color = Color(0.330702, 0.399238, 0.542666, 1)
 coordinates = NodePath("Coordinates")
 _editor = NodePath("../..")
 
+[node name="ToolSystem" type="Control" parent="GridContainer/GraphViewport" node_paths=PackedStringArray("editor", "viewport")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("6_xgd66")
+editor = NodePath("../../..")
+viewport = NodePath("..")
+
 [node name="Coordinates" type="Control" parent="GridContainer/GraphViewport" node_paths=PackedStringArray("editor", "viewport")]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("3_eltl8")
 editor = NodePath("../../..")
 viewport = NodePath("..")

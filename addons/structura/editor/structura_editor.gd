@@ -6,6 +6,7 @@ class_name StructuraEditor
 @export var level_data : LevelData
 var grid_size : int = 16
 var world_unit_scale : int = 10
+var snapping : bool = false
 
 @export var viewport : GraphViewport
 var selected_mesh : GraphMesh
@@ -26,3 +27,10 @@ func to_screen(world_position : Vector2,camera_position : Vector2, zoom : float)
 	var screen_unit : Vector2 = (world_position - camera_position) * scaler
 	
 	return screen_unit
+
+# snaps world position on a grid position
+func snap_world(world_position : Vector2) -> Vector2:
+	return Vector2(
+		round(world_position.x / grid_size) * grid_size,
+		round(world_position.y / grid_size) * grid_size
+	)

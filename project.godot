@@ -16,4 +16,4 @@ config/icon="res://icon.svg"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/WhalesState.plugin_tools/plugin.cfg", "res://addons/structura/plugin.cfg")
+enabled=PackedStringArray("res://addons/WhalesState.plugin_tools/plugin.cfg")

@@ -30,10 +30,10 @@ func _gui_input(event: InputEvent) -> void:
 		# --- Panning (MMB) ---
 		if event.button_index == MOUSE_BUTTON_MIDDLE:
 			_is_panning = event.pressed
-		elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			var local_mouse : Vector2 = get_local_mouse_position()
-			var world : Vector2 = _editor.to_world(local_mouse,_camera_position,_zoom)
-			print("X: %.1f, Y: %.1f" % [world.x, world.y])
+		#elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			#var local_mouse : Vector2 = get_local_mouse_position()
+			#var world : Vector2 = _editor.to_world(local_mouse,_camera_position,_zoom)
+			#print("X: %.1f, Y: %.1f" % [world.x, world.y])
 		refresh()
 	elif event is InputEventMouseMotion:
 		# --- Panning ---
