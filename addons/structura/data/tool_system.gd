@@ -13,6 +13,13 @@ var interaction_state: InteractionState = InteractionState.IDLE
 
 var drag_start_world : Vector2
 var create_start_world : Vector2
+var create_end_world : Vector2
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event is InputEvent and current_tool == ToolMode.SELECT:
+		if event.keycode == KEY_D and event.pressed and editor.selected_mesh:
+			editor.level_data.remove_mesh(editor.selected_mesh)
+			viewport.refresh()
 
 func _gui_input(event: InputEvent) -> void:
 	match current_tool:
@@ -27,6 +34,9 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func handle_select(event : InputEvent) -> void:
+	
+	
+	
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			var world_pos : Vector2 = editor.to_world(event.position,viewport._camera_position,viewport._zoom)
@@ -38,9 +48,19 @@ func handle_select(event : InputEvent) -> void:
 					set_tool(ToolMode.MOVE)
 				else:
 					editor.selected_mesh = mesh
+			elif editor.selected_mesh:
+				editor.selected_mesh = null
 			else:
 				# no mesh hit → prepare create
-				create_start_world = world_pos
+				var new_mesh : GraphMesh = GraphMesh.new()
+				editor.level_data.add_mesh(new_mesh)
+				editor.selected_mesh = new_mesh
+				
+				if editor.snapping:
+					create_start_world = editor.snap_world(world_pos)
+				else:
+					create_start_world = world_pos
+					
 				set_tool(ToolMode.CREATE)
 
 # ToolSystem.gd - handle_move
@@ -65,10 +85,7 @@ func handle_move(event: InputEvent) -> void:
 		var target_min: Vector2
 		if editor.snapping:
 			# Snap the reference corner (min) directly to grid under mouse
-			target_min = Vector2(
-				round(mouse_world.x / editor.grid_size) * editor.grid_size,
-				round(mouse_world.y / editor.grid_size) * editor.grid_size
-			)
+			target_min = editor.snap_world(mouse_world)
 		else:
 			# Delta-based movement (smooth drag)
 			var delta: Vector2 = mouse_world - drag_start_world
@@ -90,11 +107,46 @@ func handle_move(event: InputEvent) -> void:
 
 
 func handle_create(event : InputEvent) -> void:
-	# REQUIRE CODE - Going back
-	## Requirments, we need to check if the inital position and the current position is larger then say 5x5
-	## This is to avoid creating super small box shapes
-	set_tool(ToolMode.SELECT)
-	print("Creating!")
+	
+	# early exit
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.is_pressed():
+			editor.level_data.remove_mesh(editor.selected_mesh)
+			viewport.refresh()
+			set_tool(ToolMode.SELECT)
+			return
+		if event.button_index == MOUSE_BUTTON_LEFT and event.is_released():
+			set_tool(ToolMode.SELECT)
+			return
+	
+	# detect mouse movement and check if its greater then the min size of 5x5
+	if event is InputEventMouseMotion:
+		create_end_world = editor.to_world(event.position, viewport._camera_position, viewport._zoom)
+		
+		if editor.snapping:
+			create_end_world = editor.snap_world(create_end_world)
+		
+		var min_x = min(create_start_world.x, create_end_world.x)
+		var max_x = max(create_start_world.x, create_end_world.x)
+		var min_y = min(create_start_world.y, create_end_world.y)
+		var max_y = max(create_start_world.y, create_end_world.y)
+		
+		var step : int = editor.grid_size
+		
+		if max_x - min_x < step:
+			max_x = min_x + step
+		if max_y - min_y < 5:
+			max_y = min_y + step
+		
+		var new_x = Vector2(min_x, max_x)
+		var new_y = Vector2(min_y, max_y)
+		
+		var new_axes : Array[Vector2] = [new_x,new_y]
+		
+		editor.selected_mesh.set_axes(viewport, new_axes)
+		
+		viewport.refresh()
+		
 
 func find_mesh(world_position : Vector2) -> GraphMesh:
 	for mesh in editor.level_data.data:

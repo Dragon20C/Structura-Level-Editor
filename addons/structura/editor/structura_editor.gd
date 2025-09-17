@@ -6,7 +6,7 @@ class_name StructuraEditor
 @export var level_data : LevelData
 var grid_size : int = 16
 var world_unit_scale : int = 10
-var snapping : bool = true
+var snapping : bool = false
 
 @export var viewport : GraphViewport
 var selected_mesh : GraphMesh

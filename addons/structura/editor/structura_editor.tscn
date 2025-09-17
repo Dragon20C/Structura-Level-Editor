@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bgilkp0xevdll"]
+[gd_scene load_steps=9 format=3 uid="uid://bgilkp0xevdll"]
 
 [ext_resource type="Script" uid="uid://s2grr1g5wylc" path="res://addons/structura/editor/structura_editor.gd" id="1_wwam6"]
 [ext_resource type="Script" uid="uid://bie1sp8h3dmc8" path="res://addons/structura/graph_viewport/graph_viewport.gd" id="2_6cu81"]
@@ -6,6 +6,17 @@
 [ext_resource type="Script" uid="uid://dj43u5rb141sg" path="res://addons/structura/Coordinates/coordinates.gd" id="3_eltl8"]
 [ext_resource type="FontFile" uid="uid://gpkexih8ki4e" path="res://addons/structura/assets/font/DIN.ttf" id="4_vi1xm"]
 [ext_resource type="Script" uid="uid://xwcrl1v2abra" path="res://addons/structura/data/tool_system.gd" id="6_xgd66"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xgd66"]
+bg_color = Color(0.172549, 0.172549, 0.172549, 0.392157)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="Theme" id="Theme_xgd66"]
+default_font = ExtResource("4_vi1xm")
+default_font_size = 18
 
 [node name="StructuraEditor" type="Control" node_paths=PackedStringArray("viewport")]
 layout_mode = 3
@@ -28,7 +39,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="GraphViewport" type="ColorRect" parent="GridContainer" node_paths=PackedStringArray("coordinates", "_editor")]
+[node name="GraphViewport" type="ColorRect" parent="GridContainer" node_paths=PackedStringArray("coordinates", "orientation_l", "_editor")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -36,6 +47,7 @@ color = Color(0.0189439, 0.0989648, 0.185043, 1)
 script = ExtResource("2_6cu81")
 grid_line_color = Color(0.330702, 0.399238, 0.542666, 1)
 coordinates = NodePath("Coordinates")
+orientation_l = NodePath("Orientation/Label")
 _editor = NodePath("../..")
 
 [node name="ToolSystem" type="Control" parent="GridContainer/GraphViewport" node_paths=PackedStringArray("editor", "viewport")]
@@ -64,5 +76,24 @@ viewport = NodePath("..")
 max_pool_size = 125
 position_offset = Vector2(-9, -14)
 font = ExtResource("4_vi1xm")
+
+[node name="Orientation" type="PanelContainer" parent="GridContainer/GraphViewport"]
+custom_minimum_size = Vector2(64, 28)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0260417
+anchor_top = 0.91358
+anchor_right = 0.0954861
+anchor_bottom = 0.95679
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_xgd66")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="GridContainer/GraphViewport/Orientation"]
+layout_mode = 2
+theme = SubResource("Theme_xgd66")
+text = "TOP"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="item_rect_changed" from="GridContainer/GraphViewport" to="GridContainer/GraphViewport" method="_on_item_rect_changed"]

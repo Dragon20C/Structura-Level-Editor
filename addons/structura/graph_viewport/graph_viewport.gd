@@ -13,11 +13,21 @@ const AXIS_COLORS = {
 @export var orientation : Orientations = Orientations.TOP
 @export var grid_line_color : Color = Color(0.4,0.4,0.4)
 @export var coordinates : Coordinates
+@export var orientation_l : Label
 
 @export var _editor : StructuraEditor
 var _camera_position : Vector2 = Vector2.ZERO
 var _zoom : float = 1.0
 var _is_panning : bool = false
+
+func _ready() -> void:
+	match orientation:
+		Orientations.TOP:
+			orientation_l.text = "TOP"
+		Orientations.SIDE:
+			orientation_l.text = "SIDE"
+		Orientations.FRONT:
+			orientation_l.text = "FRONT"
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
