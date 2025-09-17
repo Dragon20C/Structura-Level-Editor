@@ -124,17 +124,19 @@ func draw_meshes() -> void:
 				rect = mesh.get_side_view_rect()
 			Orientations.FRONT:
 				rect = mesh.get_front_view_rect()
-		
 		# Top-left and bottom-right corners in world space
 		var p1 = rect.position
 		var p2 = rect.position + rect.size
-		
+
 		# Convert to screen space
 		var s1 = _editor.to_screen(p1, _camera_position, _zoom)
 		var s2 = _editor.to_screen(p2, _camera_position, _zoom)
 		
 		# To avoid drawing off screen
 		if s1.x < 0 or s1.y < 0:
+			s1 = s1.clamp(Vector2.ZERO,size)
+		
+		if s2.x < 0 or s2.y < 0:
 			continue
 		
 		# Build rect from transformed corners
@@ -147,6 +149,7 @@ func draw_meshes() -> void:
 			fill_color = Color(0.2, 0.6, 1.0, 0.3)
 			outline_color = Color(0.2, 0.6, 1.0)
 		
+		#print(screen_rect)
 		draw_rect(screen_rect, fill_color, true)
 		draw_rect(screen_rect, outline_color, false)
 

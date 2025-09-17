@@ -2,56 +2,62 @@
 extends Resource
 class_name GraphMesh
 
-@export var x_min: float = -5
-@export var x_max: float = 5
-@export var y_min: float = -5
-@export var y_max: float = 5
-@export var z_min: float = -5
-@export var z_max: float = 5
-	
+@export var x_range: Vector2 = Vector2(-5, 5)  # x_min = x_range.x, x_max = x_range.y
+@export var y_range: Vector2 = Vector2(-5, 5)  # y_min = y_range.x, y_max = y_range.y
+@export var z_range: Vector2 = Vector2(-5, 5)  # z_min = z_range.x, z_max = z_range.y
+
 func get_size() -> Vector3:
-	return Vector3(x_max - x_min, y_max - y_min, z_max - z_min)
+	return Vector3(x_range.y - x_range.x,
+				   y_range.y - y_range.x,
+				   z_range.y - z_range.x)
 
 func get_center() -> Vector3:
-	return Vector3(
-		(x_min + x_max) / 2.0,
-		(y_min + y_max) / 2.0,
-		(z_min + z_max) / 2.0
-		)
-
-func apply_move(delta: Vector2, viewport : GraphViewport) -> void:
-	# delta is in world units from the editor drag
-	match viewport.orientation:
-		# Top view = X (horizontal), Z (vertical)
-		viewport.Orientations.TOP:
-			x_min += delta.x
-			x_max += delta.x
-			z_min += delta.y
-			z_max += delta.y
-
-		# Front view = X (horizontal), Y (vertical)
-		viewport.Orientations.FRONT:
-			x_min += delta.x
-			x_max += delta.x
-			y_min += delta.y
-			y_max += delta.y
-
-		# Side view = Z (horizontal), Y (vertical)
-		viewport.Orientations.SIDE:
-			z_min += delta.x
-			z_max += delta.x
-			y_min += delta.y
-			y_max += delta.y
-
+	return Vector3((x_range.x + x_range.y) / 2,
+				   (y_range.x + y_range.y) / 2,
+				   (z_range.x + z_range.y) / 2)
 
 func to_aabb() -> AABB:
 	return AABB(get_center() - get_size() / 2.0, get_size())
 
+# Rects for 2D views
 func get_top_view_rect() -> Rect2:
-	return Rect2(Vector2(x_min, z_min), Vector2(x_max - x_min, z_max - z_min))
+	return Rect2(Vector2(x_range.x, z_range.x),
+				 Vector2(x_range.y - x_range.x, z_range.y - z_range.x))
 
 func get_front_view_rect() -> Rect2:
-	return Rect2(Vector2(x_min, y_min), Vector2(x_max - x_min, y_max - y_min))
+	return Rect2(Vector2(x_range.x, y_range.x),
+				 Vector2(x_range.y - x_range.x, y_range.y - y_range.x))
 
 func get_side_view_rect() -> Rect2:
-	return Rect2(Vector2(z_min, y_min), Vector2(z_max - z_min, y_max - y_min))
+	return Rect2(Vector2(z_range.x, y_range.x),
+				 Vector2(z_range.y - z_range.x, y_range.y - y_range.x))
+
+# Returns an array of axes (min, max) Vector2s for current viewport orientation
+func get_axes(viewport : GraphViewport) -> Array:
+	match viewport.orientation:
+		viewport.Orientations.TOP:
+			return [x_range, z_range]
+		viewport.Orientations.FRONT:
+			return [x_range, y_range]
+		viewport.Orientations.SIDE:
+			return [z_range, y_range]
+		_:
+			return []
+
+# In GraphMesh.gd
+func set_axes(viewport : GraphViewport, axes: Array[Vector2]) -> void:
+	if axes == null or axes.size() < 2:
+		return
+	var a0: Vector2 = axes[0]
+	var a1: Vector2 = axes[1]
+
+	match viewport.orientation:
+		viewport.Orientations.TOP:
+			x_range = Vector2(a0.x, a0.y)
+			z_range = Vector2(a1.x, a1.y)
+		viewport.Orientations.FRONT:
+			x_range = Vector2(a0.x, a0.y)
+			y_range = Vector2(a1.x, a1.y)
+		viewport.Orientations.SIDE:
+			z_range = Vector2(a0.x, a0.y)
+			y_range = Vector2(a1.x, a1.y)
