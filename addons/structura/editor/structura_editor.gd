@@ -8,9 +8,14 @@ var grid_size : int = 16
 var world_unit_scale : int = 10
 var snapping : bool = false
 
-@export var viewport : GraphViewport
+@export var viewports : Array[GraphViewport]
 var selected_mesh : GraphMesh
 
+## should only call this if we are updating all of the viewports at the same time.
+## example when adding a new mesh or when a mesh is modified
+func refresh_viewports() -> void:
+	for viewport in viewports:
+		viewport.refresh()
 
 # From drawing to world units
 func to_world(screen_position : Vector2,camera_position : Vector2, zoom : float) -> Vector2:

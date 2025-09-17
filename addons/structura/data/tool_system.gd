@@ -19,7 +19,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEvent and current_tool == ToolMode.SELECT:
 		if event.keycode == KEY_D and event.pressed and editor.selected_mesh:
 			editor.level_data.remove_mesh(editor.selected_mesh)
-			viewport.refresh()
+			editor.refresh_viewports()
 
 func _gui_input(event: InputEvent) -> void:
 	match current_tool:
@@ -34,9 +34,6 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func handle_select(event : InputEvent) -> void:
-	
-	
-	
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			var world_pos : Vector2 = editor.to_world(event.position,viewport._camera_position,viewport._zoom)
@@ -62,6 +59,7 @@ func handle_select(event : InputEvent) -> void:
 					create_start_world = world_pos
 					
 				set_tool(ToolMode.CREATE)
+			editor.refresh_viewports()
 
 # ToolSystem.gd - handle_move
 func handle_move(event: InputEvent) -> void:
@@ -103,7 +101,7 @@ func handle_move(event: InputEvent) -> void:
 		editor.selected_mesh.set_axes(viewport, new_axes)
 
 		# Redraw viewport
-		viewport.refresh()
+		editor.refresh_viewports()
 
 
 func handle_create(event : InputEvent) -> void:
@@ -112,7 +110,7 @@ func handle_create(event : InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.is_pressed():
 			editor.level_data.remove_mesh(editor.selected_mesh)
-			viewport.refresh()
+			editor.refresh_viewports()
 			set_tool(ToolMode.SELECT)
 			return
 		if event.button_index == MOUSE_BUTTON_LEFT and event.is_released():
@@ -145,7 +143,7 @@ func handle_create(event : InputEvent) -> void:
 		
 		editor.selected_mesh.set_axes(viewport, new_axes)
 		
-		viewport.refresh()
+		editor.refresh_viewports()
 		
 
 func find_mesh(world_position : Vector2) -> GraphMesh:

@@ -18,7 +18,7 @@ corner_radius_bottom_left = 6
 default_font = ExtResource("4_vi1xm")
 default_font_size = 18
 
-[node name="StructuraEditor" type="Control" node_paths=PackedStringArray("viewport")]
+[node name="StructuraEditor" type="Control" node_paths=PackedStringArray("viewports")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,7 +29,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_wwam6")
 level_data = ExtResource("2_r8jvi")
-viewport = NodePath("GridContainer/GraphViewport")
+viewports = [NodePath("GridContainer/Top"), NodePath("GridContainer/Side"), NodePath("GridContainer/Front")]
 
 [node name="GridContainer" type="GridContainer" parent="."]
 layout_mode = 1
@@ -38,8 +38,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+columns = 2
 
-[node name="GraphViewport" type="ColorRect" parent="GridContainer" node_paths=PackedStringArray("coordinates", "orientation_l", "_editor")]
+[node name="Top" type="ColorRect" parent="GridContainer" node_paths=PackedStringArray("coordinates", "orientation_l", "_editor")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -50,7 +51,7 @@ coordinates = NodePath("Coordinates")
 orientation_l = NodePath("Orientation/Label")
 _editor = NodePath("../..")
 
-[node name="ToolSystem" type="Control" parent="GridContainer/GraphViewport" node_paths=PackedStringArray("editor", "viewport")]
+[node name="ToolSystem" type="Control" parent="GridContainer/Top" node_paths=PackedStringArray("editor", "viewport")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -62,7 +63,7 @@ script = ExtResource("6_xgd66")
 editor = NodePath("../../..")
 viewport = NodePath("..")
 
-[node name="Coordinates" type="Control" parent="GridContainer/GraphViewport" node_paths=PackedStringArray("editor", "viewport")]
+[node name="Coordinates" type="Control" parent="GridContainer/Top" node_paths=PackedStringArray("editor", "viewport")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -77,7 +78,7 @@ max_pool_size = 125
 position_offset = Vector2(-9, -14)
 font = ExtResource("4_vi1xm")
 
-[node name="Orientation" type="PanelContainer" parent="GridContainer/GraphViewport"]
+[node name="Orientation" type="PanelContainer" parent="GridContainer/Top"]
 custom_minimum_size = Vector2(64, 28)
 layout_mode = 1
 anchors_preset = -1
@@ -89,11 +90,129 @@ grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_xgd66")
 metadata/_edit_use_anchors_ = true
 
-[node name="Label" type="Label" parent="GridContainer/GraphViewport/Orientation"]
+[node name="Label" type="Label" parent="GridContainer/Top/Orientation"]
 layout_mode = 2
 theme = SubResource("Theme_xgd66")
 text = "TOP"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="item_rect_changed" from="GridContainer/GraphViewport" to="GridContainer/GraphViewport" method="_on_item_rect_changed"]
+[node name="Side" type="ColorRect" parent="GridContainer" node_paths=PackedStringArray("coordinates", "orientation_l", "_editor")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.0189439, 0.0989648, 0.185043, 1)
+script = ExtResource("2_6cu81")
+orientation = 1
+grid_line_color = Color(0.330702, 0.399238, 0.542666, 1)
+coordinates = NodePath("Coordinates")
+orientation_l = NodePath("Orientation/Label")
+_editor = NodePath("../..")
+
+[node name="ToolSystem" type="Control" parent="GridContainer/Side" node_paths=PackedStringArray("editor", "viewport")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("6_xgd66")
+editor = NodePath("../../..")
+viewport = NodePath("..")
+
+[node name="Coordinates" type="Control" parent="GridContainer/Side" node_paths=PackedStringArray("editor", "viewport")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_eltl8")
+editor = NodePath("../../..")
+viewport = NodePath("..")
+max_pool_size = 125
+position_offset = Vector2(-9, -14)
+font = ExtResource("4_vi1xm")
+
+[node name="Orientation" type="PanelContainer" parent="GridContainer/Side"]
+custom_minimum_size = Vector2(64, 28)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0260417
+anchor_top = 0.91358
+anchor_right = 0.0954861
+anchor_bottom = 0.95679
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_xgd66")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="GridContainer/Side/Orientation"]
+layout_mode = 2
+theme = SubResource("Theme_xgd66")
+text = "TOP"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Front" type="ColorRect" parent="GridContainer" node_paths=PackedStringArray("coordinates", "orientation_l", "_editor")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.0189439, 0.0989648, 0.185043, 1)
+script = ExtResource("2_6cu81")
+orientation = 2
+grid_line_color = Color(0.330702, 0.399238, 0.542666, 1)
+coordinates = NodePath("Coordinates")
+orientation_l = NodePath("Orientation/Label")
+_editor = NodePath("../..")
+
+[node name="ToolSystem" type="Control" parent="GridContainer/Front" node_paths=PackedStringArray("editor", "viewport")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("6_xgd66")
+editor = NodePath("../../..")
+viewport = NodePath("..")
+
+[node name="Coordinates" type="Control" parent="GridContainer/Front" node_paths=PackedStringArray("editor", "viewport")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_eltl8")
+editor = NodePath("../../..")
+viewport = NodePath("..")
+max_pool_size = 125
+position_offset = Vector2(-9, -14)
+font = ExtResource("4_vi1xm")
+
+[node name="Orientation" type="PanelContainer" parent="GridContainer/Front"]
+custom_minimum_size = Vector2(64, 28)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0260417
+anchor_top = 0.91358
+anchor_right = 0.0954861
+anchor_bottom = 0.95679
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_xgd66")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="GridContainer/Front/Orientation"]
+layout_mode = 2
+theme = SubResource("Theme_xgd66")
+text = "TOP"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="item_rect_changed" from="GridContainer/Top" to="GridContainer/Top" method="_on_item_rect_changed"]
+[connection signal="item_rect_changed" from="GridContainer/Side" to="GridContainer/Side" method="_on_item_rect_changed"]
+[connection signal="item_rect_changed" from="GridContainer/Front" to="GridContainer/Front" method="_on_item_rect_changed"]

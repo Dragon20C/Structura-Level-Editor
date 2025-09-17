@@ -143,11 +143,14 @@ func draw_meshes() -> void:
 		var s2 = _editor.to_screen(p2, _camera_position, _zoom)
 		
 		# To avoid drawing off screen
-		if s1.x < 0 or s1.y < 0:
-			s1 = s1.clamp(Vector2.ZERO,size)
-		
 		if s2.x < 0 or s2.y < 0:
 			continue
+		# To avoid drawing off screen
+		if s1.x > size.x or s1.y > size.y:
+			continue
+		
+		s1 = s1.clamp(Vector2.ZERO,size)
+		s2 = s2.clamp(Vector2.ZERO,size)
 		
 		# Build rect from transformed corners
 		var screen_rect = Rect2(s1, s2 - s1).abs()
