@@ -179,26 +179,36 @@ func draw_handles() -> void:
 		var offset : float = 2.5
 		
 		# Midpoints of each edge
-		var left : Vector2 = rect.position + Vector2(0, rect.size.y / 2) - Vector2(offset,0)
-		var right : Vector2  = rect.position + Vector2(rect.size.x, rect.size.y / 2) + Vector2(offset,0)
-		var top : Vector2 = rect.position + Vector2(rect.size.x / 2, 0) - Vector2(0,offset)
-		var bottom : Vector2  = rect.position + Vector2(rect.size.x / 2, rect.size.y) + Vector2(0,offset)
+		var left  = rect.position + Vector2(0, rect.size.y / 2) - Vector2(offset, 0)
+		var right = rect.position + Vector2(rect.size.x, rect.size.y / 2) + Vector2(offset, 0)
+		var top   = rect.position + Vector2(rect.size.x / 2, 0) - Vector2(0, offset)
+		var bottom= rect.position + Vector2(rect.size.x / 2, rect.size.y) + Vector2(0, offset)
 		
-		
-		left = _editor.to_screen(left,_camera_position,_zoom)
-		right = _editor.to_screen(right,_camera_position,_zoom)
-		top = _editor.to_screen(top,_camera_position,_zoom)
-		bottom = _editor.to_screen(bottom,_camera_position,_zoom)
+		# Convert to screen
+		left   = _editor.to_screen(left,   _camera_position, _zoom)
+		right  = _editor.to_screen(right,  _camera_position, _zoom)
+		top    = _editor.to_screen(top,    _camera_position, _zoom)
+		bottom = _editor.to_screen(bottom, _camera_position, _zoom)
 		
 		var axes = get_orientation_axes()
 		var horiz_axis = axes[0]
 		var vert_axis  = axes[1]
 
-		# Draw rectangles for handles
-		draw_rect(Rect2(left - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[horiz_axis])
-		draw_rect(Rect2(right - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[horiz_axis])
-		draw_rect(Rect2(top - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[vert_axis])
-		draw_rect(Rect2(bottom - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[vert_axis])
+		# Draw rectangles for handles only if they are inside viewport
+		if _is_inside_viewport(left, handle_size):
+			draw_rect(Rect2(left - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[horiz_axis])
+		if _is_inside_viewport(right, handle_size):
+			draw_rect(Rect2(right - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[horiz_axis])
+		if _is_inside_viewport(top, handle_size):
+			draw_rect(Rect2(top - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[vert_axis])
+		if _is_inside_viewport(bottom, handle_size):
+			draw_rect(Rect2(bottom - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[vert_axis])
+
+
+func _is_inside_viewport(p: Vector2, handle_size: int) -> bool:
+	var half = handle_size / 2
+	return p.x >= half and p.x <= size.x - half and p.y >= half and p.y <= size.y - half
+
 
 func get_orientation_axes() -> Array[String]:
 	match orientation:

@@ -2,6 +2,7 @@
 extends Control
 class_name ToolSystem
 
+enum Axes {TOP,BOTTOM,RIGHT,LEFT}
 enum ToolMode { SELECT, CREATE, MOVE, SCALE }
 var current_tool: ToolMode = ToolMode.SELECT
 
@@ -14,7 +15,7 @@ var interaction_state: InteractionState = InteractionState.IDLE
 var drag_start_world : Vector2
 var create_start_world : Vector2
 var create_end_world : Vector2
-var active_axis : String
+var active_axis : Axes
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEvent and current_tool == ToolMode.SELECT:
@@ -44,7 +45,6 @@ func handle_select(event : InputEvent) -> void:
 			var handle = get_handle_under_mouse(event.position)
 			if not handle.is_empty():
 				active_axis = handle["name"]
-				print(active_axis)
 				set_tool(ToolMode.SCALE)
 				return
 			
@@ -157,8 +157,40 @@ func handle_create(event : InputEvent) -> void:
 		
 
 func handle_scale(event : InputEvent) -> void:
-	print("Back to SELECT!")
-	set_tool(ToolMode.SELECT)
+	if editor.selected_mesh == null:
+		return
+
+	# Finish scaling on release
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_released():
+		set_tool(ToolMode.SELECT)
+		return
+	
+	if event is InputEventMouseMotion:
+		var mouse_world: Vector2 = editor.to_world(event.position, viewport._camera_position, viewport._zoom)
+		
+		if editor.snapping:
+			mouse_world = editor.snap_world(mouse_world)
+		
+		# Copy current axes
+		var axes: Array = editor.selected_mesh.get_axes(viewport) # [axis0, axis1]
+		var a0: Vector2 = axes[0] # horizontal axis (x or z)
+		var a1: Vector2 = axes[1] # vertical axis   (y or z)
+
+		match active_axis:
+			Axes.RIGHT:
+				a0.y = max(mouse_world.x, a0.x + 0.1) # keep right > left
+			Axes.LEFT:
+				a0.x = min(mouse_world.x, a0.y - 0.1) # keep left < right
+			Axes.TOP:
+				a1.x = min(mouse_world.y, a1.y - 0.1) # keep top < bottom
+			Axes.BOTTOM:
+				a1.y = max(mouse_world.y, a1.x + 0.1) # keep bottom > top
+
+		# Apply back to mesh
+		editor.selected_mesh.set_axes(viewport, [a0, a1])
+
+		# Redraw viewport
+		editor.refresh_viewports()
 
 func find_mesh(world_position : Vector2) -> GraphMesh:
 	for mesh in editor.level_data.data:
@@ -207,15 +239,15 @@ func get_handle_under_mouse(mouse_pos: Vector2) -> Dictionary:
 	
 	var half = handle_size / 2
 	var handles = {
-		"left":   Rect2(left - Vector2(half, half), Vector2(handle_size, handle_size)),
-		"right":  Rect2(right - Vector2(half, half), Vector2(handle_size, handle_size)),
-		"top":    Rect2(top - Vector2(half, half), Vector2(handle_size, handle_size)),
-		"bottom": Rect2(bottom - Vector2(half, half), Vector2(handle_size, handle_size))
+		Axes.LEFT:   Rect2(left - Vector2(half, half), Vector2(handle_size, handle_size)),
+		Axes.RIGHT:  Rect2(right - Vector2(half, half), Vector2(handle_size, handle_size)),
+		Axes.TOP:    Rect2(top - Vector2(half, half), Vector2(handle_size, handle_size)),
+		Axes.BOTTOM: Rect2(bottom - Vector2(half, half), Vector2(handle_size, handle_size))
 	}
 	
-	for name in handles.keys():
-		if handles[name].has_point(mouse_pos):
-			return {"name": name, "rect": handles[name]}
+	for axes in handles.keys():
+		if handles[axes].has_point(mouse_pos):
+			return {"name": axes, "rect": handles[axes]}
 	
 	return {}
 
