@@ -151,7 +151,7 @@ metadata/_edit_use_anchors_ = true
 [node name="Label" type="Label" parent="GridContainer/Side/Orientation"]
 layout_mode = 2
 theme = SubResource("Theme_xgd66")
-text = "TOP"
+text = "SIDE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -209,7 +209,7 @@ metadata/_edit_use_anchors_ = true
 [node name="Label" type="Label" parent="GridContainer/Front/Orientation"]
 layout_mode = 2
 theme = SubResource("Theme_xgd66")
-text = "TOP"
+text = "FRONT"
 horizontal_alignment = 1
 vertical_alignment = 1
 

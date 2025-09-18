@@ -40,10 +40,6 @@ func _gui_input(event: InputEvent) -> void:
 		# --- Panning (MMB) ---
 		if event.button_index == MOUSE_BUTTON_MIDDLE:
 			_is_panning = event.pressed
-		#elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			#var local_mouse : Vector2 = get_local_mouse_position()
-			#var world : Vector2 = _editor.to_world(local_mouse,_camera_position,_zoom)
-			#print("X: %.1f, Y: %.1f" % [world.x, world.y])
 		refresh()
 	elif event is InputEventMouseMotion:
 		# --- Panning ---
@@ -51,12 +47,12 @@ func _gui_input(event: InputEvent) -> void:
 			var scaler = _editor.world_unit_scale * _zoom
 			var delta_world = event.relative / scaler
 			_camera_position -= delta_world
-	
 			refresh()
 
 func _draw() -> void:
 	draw_graph()
 	draw_meshes()
+	draw_handles()
 
 # A simple function for updating the whole viewport
 func refresh() -> void:
@@ -166,6 +162,43 @@ func draw_meshes() -> void:
 		draw_rect(screen_rect, fill_color, true)
 		draw_rect(screen_rect, outline_color, false)
 
+func draw_handles() -> void:
+	var mesh : GraphMesh = _editor.selected_mesh
+	if mesh:
+		var rect : Rect2
+		
+		match orientation:
+			Orientations.TOP:
+				rect = mesh.get_top_view_rect()
+			Orientations.SIDE:
+				rect = mesh.get_side_view_rect()
+			Orientations.FRONT:
+				rect = mesh.get_front_view_rect()
+		
+		var handle_size : int = 12
+		var offset : float = 2.5
+		
+		# Midpoints of each edge
+		var left : Vector2 = rect.position + Vector2(0, rect.size.y / 2) - Vector2(offset,0)
+		var right : Vector2  = rect.position + Vector2(rect.size.x, rect.size.y / 2) + Vector2(offset,0)
+		var top : Vector2 = rect.position + Vector2(rect.size.x / 2, 0) - Vector2(0,offset)
+		var bottom : Vector2  = rect.position + Vector2(rect.size.x / 2, rect.size.y) + Vector2(0,offset)
+		
+		
+		left = _editor.to_screen(left,_camera_position,_zoom)
+		right = _editor.to_screen(right,_camera_position,_zoom)
+		top = _editor.to_screen(top,_camera_position,_zoom)
+		bottom = _editor.to_screen(bottom,_camera_position,_zoom)
+		
+		var axes = get_orientation_axes()
+		var horiz_axis = axes[0]
+		var vert_axis  = axes[1]
+
+		# Draw rectangles for handles
+		draw_rect(Rect2(left - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[horiz_axis])
+		draw_rect(Rect2(right - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[horiz_axis])
+		draw_rect(Rect2(top - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[vert_axis])
+		draw_rect(Rect2(bottom - Vector2(handle_size/2, handle_size/2), Vector2(handle_size, handle_size)), AXIS_COLORS[vert_axis])
 
 func get_orientation_axes() -> Array[String]:
 	match orientation:

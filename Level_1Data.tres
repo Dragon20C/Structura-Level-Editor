@@ -5,9 +5,9 @@
 
 [sub_resource type="Resource" id="Resource_k3eev"]
 script = ExtResource("1_k3eev")
-x_range = Vector2(-15.949, 15.9432)
+x_range = Vector2(-15.8571, 16.0351)
 y_range = Vector2(-5, 5)
-z_range = Vector2(-15.584, 15.8226)
+z_range = Vector2(-16.9557, 14.4509)
 
 [resource]
 script = ExtResource("2_u0hpc")

@@ -14,11 +14,13 @@ var interaction_state: InteractionState = InteractionState.IDLE
 var drag_start_world : Vector2
 var create_start_world : Vector2
 var create_end_world : Vector2
+var active_axis : String
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEvent and current_tool == ToolMode.SELECT:
 		if event.keycode == KEY_D and event.pressed and editor.selected_mesh:
 			editor.level_data.remove_mesh(editor.selected_mesh)
+			editor.selected_mesh = null
 			editor.refresh_viewports()
 
 func _gui_input(event: InputEvent) -> void:
@@ -30,7 +32,7 @@ func _gui_input(event: InputEvent) -> void:
 		ToolMode.MOVE:
 			handle_move(event)
 		ToolMode.SCALE:
-			pass
+			handle_scale(event)
 
 
 func handle_select(event : InputEvent) -> void:
@@ -38,6 +40,14 @@ func handle_select(event : InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			var world_pos : Vector2 = editor.to_world(event.position,viewport._camera_position,viewport._zoom)
 			var mesh : GraphMesh = find_mesh(world_pos)
+			
+			var handle = get_handle_under_mouse(event.position)
+			if not handle.is_empty():
+				active_axis = handle["name"]
+				print(active_axis)
+				set_tool(ToolMode.SCALE)
+				return
+			
 			if mesh:
 				if mesh == editor.selected_mesh:
 					# start moving
@@ -146,6 +156,10 @@ func handle_create(event : InputEvent) -> void:
 		editor.refresh_viewports()
 		
 
+func handle_scale(event : InputEvent) -> void:
+	print("Back to SELECT!")
+	set_tool(ToolMode.SELECT)
+
 func find_mesh(world_position : Vector2) -> GraphMesh:
 	for mesh in editor.level_data.data:
 		var rect: Rect2
@@ -161,6 +175,50 @@ func find_mesh(world_position : Vector2) -> GraphMesh:
 		if rect.has_point(world_position):
 			return mesh
 	return null
+
+func get_handle_under_mouse(mouse_pos: Vector2) -> Dictionary:
+	var mesh : GraphMesh = editor.selected_mesh
+	if not mesh:
+		return {}
+	
+	var rect : Rect2
+	match viewport.orientation:
+		viewport.Orientations.TOP:
+			rect = mesh.get_top_view_rect()
+		viewport.Orientations.SIDE:
+			rect = mesh.get_side_view_rect()
+		viewport.Orientations.FRONT:
+			rect = mesh.get_front_view_rect()
+	
+	var handle_size : int = 12
+	var offset : float = 2.5
+	
+	# Edge points in local space
+	var left = rect.position + Vector2(0, rect.size.y / 2) - Vector2(offset,0)
+	var right = rect.position + Vector2(rect.size.x, rect.size.y / 2) + Vector2(offset,0)
+	var top = rect.position + Vector2(rect.size.x / 2, 0) - Vector2(0,offset)
+	var bottom = rect.position + Vector2(rect.size.x / 2, rect.size.y) + Vector2(0,offset)
+	
+	# Convert to screen
+	left = editor.to_screen(left,viewport._camera_position,viewport._zoom)
+	right = editor.to_screen(right,viewport._camera_position,viewport._zoom)
+	top = editor.to_screen(top,viewport._camera_position,viewport._zoom)
+	bottom = editor.to_screen(bottom,viewport._camera_position,viewport._zoom)
+	
+	var half = handle_size / 2
+	var handles = {
+		"left":   Rect2(left - Vector2(half, half), Vector2(handle_size, handle_size)),
+		"right":  Rect2(right - Vector2(half, half), Vector2(handle_size, handle_size)),
+		"top":    Rect2(top - Vector2(half, half), Vector2(handle_size, handle_size)),
+		"bottom": Rect2(bottom - Vector2(half, half), Vector2(handle_size, handle_size))
+	}
+	
+	for name in handles.keys():
+		if handles[name].has_point(mouse_pos):
+			return {"name": name, "rect": handles[name]}
+	
+	return {}
+
 
 func set_tool(mode: ToolMode) -> void:
 	current_tool = mode

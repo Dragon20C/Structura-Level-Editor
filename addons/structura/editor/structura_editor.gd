@@ -11,6 +11,11 @@ var snapping : bool = false
 @export var viewports : Array[GraphViewport]
 var selected_mesh : GraphMesh
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.keycode == KEY_E and event.pressed:
+			snapping = !snapping
+
 ## should only call this if we are updating all of the viewports at the same time.
 ## example when adding a new mesh or when a mesh is modified
 func refresh_viewports() -> void:
