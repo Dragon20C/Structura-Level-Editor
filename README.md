@@ -1,6 +1,9 @@
 # Structura-Level-Editor
 A Graph based 3D level editor that allows you to create levels out of shapes.
 
+[REQUIREMENTS]
+-You will need to create a new resource of level_data, this is where all the meshes are stored and you must load this resource before working on your level
+
 [USAGE]
 - Middle mouse button to pan the graphs.
 - Left click on empty graph for mesh creation
