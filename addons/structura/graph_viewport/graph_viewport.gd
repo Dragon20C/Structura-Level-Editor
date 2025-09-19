@@ -64,7 +64,7 @@ func set_zoom(new_zoom: float, pivot: Vector2 = get_local_mouse_position()) -> v
 	var world_before = _editor.to_world(pivot, _camera_position, _zoom)
 
 	# Apply zoom
-	_zoom = clampf(new_zoom, 0.25, 4.0)
+	_zoom = clampf(new_zoom, 0.15, 4.0)
 
 	# World position under mouse AFTER zoom
 	var world_after = _editor.to_world(pivot, _camera_position, _zoom)

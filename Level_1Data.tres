@@ -1,15 +1,69 @@
-[gd_resource type="Resource" script_class="LevelData" load_steps=4 format=3 uid="uid://baf1tslvjaw58"]
+[gd_resource type="Resource" script_class="LevelData" load_steps=13 format=3 uid="uid://baf1tslvjaw58"]
 
 [ext_resource type="Script" uid="uid://dnvbrug2tldry" path="res://addons/structura/data/graph_mesh.gd" id="1_k3eev"]
 [ext_resource type="Script" uid="uid://d4nqbqrdhfvnp" path="res://addons/structura/data/level_data.gd" id="2_u0hpc"]
 
 [sub_resource type="Resource" id="Resource_k3eev"]
 script = ExtResource("1_k3eev")
-x_range = Vector2(-15.8571, 16.0351)
+x_range = Vector2(-16, 15.8922)
 y_range = Vector2(-5, 5)
-z_range = Vector2(-16.9557, 14.4509)
+z_range = Vector2(-16, 16)
+
+[sub_resource type="Resource" id="Resource_u0hpc"]
+script = ExtResource("1_k3eev")
+x_range = Vector2(16, 48)
+y_range = Vector2(-5, 5)
+z_range = Vector2(0, 16)
+
+[sub_resource type="Resource" id="Resource_6rehw"]
+script = ExtResource("1_k3eev")
+x_range = Vector2(48, 64)
+y_range = Vector2(-5, 5)
+z_range = Vector2(0, 32)
+
+[sub_resource type="Resource" id="Resource_60uyb"]
+script = ExtResource("1_k3eev")
+x_range = Vector2(-32, 64)
+y_range = Vector2(-5, 5)
+z_range = Vector2(32, 48)
+
+[sub_resource type="Resource" id="Resource_36tkl"]
+script = ExtResource("1_k3eev")
+x_range = Vector2(-48, -32)
+y_range = Vector2(-5, 5)
+z_range = Vector2(-32, 48)
+
+[sub_resource type="Resource" id="Resource_831i7"]
+script = ExtResource("1_k3eev")
+x_range = Vector2(-48, 80)
+y_range = Vector2(-5, 5)
+z_range = Vector2(-48, -32)
+
+[sub_resource type="Resource" id="Resource_2wdav"]
+script = ExtResource("1_k3eev")
+x_range = Vector2(80, 96)
+y_range = Vector2(-5, 5)
+z_range = Vector2(-48, 64)
+
+[sub_resource type="Resource" id="Resource_aray5"]
+script = ExtResource("1_k3eev")
+x_range = Vector2(-64, 96)
+y_range = Vector2(-5, 5)
+z_range = Vector2(64, 80)
+
+[sub_resource type="Resource" id="Resource_rj5np"]
+script = ExtResource("1_k3eev")
+x_range = Vector2(-80, -64)
+y_range = Vector2(-5, 5)
+z_range = Vector2(-48, 80)
+
+[sub_resource type="Resource" id="Resource_dac36"]
+script = ExtResource("1_k3eev")
+x_range = Vector2(-80, -64)
+y_range = Vector2(-5, 5)
+z_range = Vector2(-64, -48)
 
 [resource]
 script = ExtResource("2_u0hpc")
-data = Array[ExtResource("1_k3eev")]([SubResource("Resource_k3eev")])
+data = Array[ExtResource("1_k3eev")]([SubResource("Resource_k3eev"), SubResource("Resource_u0hpc"), SubResource("Resource_6rehw"), SubResource("Resource_60uyb"), SubResource("Resource_36tkl"), SubResource("Resource_831i7"), SubResource("Resource_2wdav"), SubResource("Resource_aray5"), SubResource("Resource_rj5np"), SubResource("Resource_dac36")])
 metadata/_custom_type_script = "uid://d4nqbqrdhfvnp"

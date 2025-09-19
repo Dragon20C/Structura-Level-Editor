@@ -17,6 +17,10 @@ var create_start_world : Vector2
 var create_end_world : Vector2
 var active_axis : Axes
 
+var selection_cycle : Array = []
+var selection_index : int = 0
+
+
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEvent and current_tool == ToolMode.SELECT:
 		if event.keycode == KEY_D and event.pressed and editor.selected_mesh:
@@ -35,43 +39,61 @@ func _gui_input(event: InputEvent) -> void:
 		ToolMode.SCALE:
 			handle_scale(event)
 
+var press_pos : Vector2
+var press_mesh : GraphMesh
+var drag_threshold := 4.0
+var is_dragging := false
 
-func handle_select(event : InputEvent) -> void:
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			var world_pos : Vector2 = editor.to_world(event.position,viewport._camera_position,viewport._zoom)
-			var mesh : GraphMesh = find_mesh(world_pos)
-			
-			var handle = get_handle_under_mouse(event.position)
-			if not handle.is_empty():
-				active_axis = handle["name"]
-				set_tool(ToolMode.SCALE)
-				return
-			
-			if mesh:
-				if mesh == editor.selected_mesh:
-					# start moving
-					drag_start_world = world_pos
-					set_tool(ToolMode.MOVE)
-				else:
-					editor.selected_mesh = mesh
-			elif editor.selected_mesh:
-				editor.selected_mesh = null
-			else:
-				# no mesh hit → prepare create
-				var new_mesh : GraphMesh = GraphMesh.new()
-				editor.level_data.add_mesh(new_mesh)
-				editor.selected_mesh = new_mesh
+func handle_select(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			press_pos = event.position
+			press_mesh = editor.selected_mesh
+			is_dragging = false
+		else:
+			# Mouse released
+			if not is_dragging:
+				# treat as a click
+				_process_click(event.position)
+			# reset
+			press_mesh = null
+
+	elif event is InputEventMouseMotion and event.button_mask & MOUSE_BUTTON_MASK_LEFT != 0:
+		if not is_dragging and press_pos.distance_to(event.position) > drag_threshold:
+			is_dragging = true
+			if press_mesh and press_mesh == editor.selected_mesh:
+				# start move
+				var world_pos = editor.to_world(event.position, viewport._camera_position, viewport._zoom)
+				drag_start_world = world_pos
+				set_tool(ToolMode.MOVE)
+
+
+func _process_click(mouse_pos: Vector2) -> void:
+	var world_pos : Vector2 = editor.to_world(mouse_pos, viewport._camera_position, viewport._zoom)
+	var handle = get_handle_under_mouse(mouse_pos)
+	if not handle.is_empty():
+		active_axis = handle["name"]
+		set_tool(ToolMode.SCALE)
+		return
+	
+	var hits = find_meshes_sorted(world_pos)
+	if hits.size() > 0:
+		# if the current selected mesh is in the cycle → go to next
+		if selection_cycle != hits.map(func(x): return x["mesh"]):
+			# reset cycle if meshes under mouse changed
+			selection_cycle = hits.map(func(x): return x["mesh"])
+			selection_index = 0
 				
-				if editor.snapping:
-					create_start_world = editor.snap_world(world_pos)
-				else:
-					create_start_world = world_pos
-					
-				set_tool(ToolMode.CREATE)
-			editor.refresh_viewports()
+		if editor.selected_mesh and editor.selected_mesh in selection_cycle:
+			selection_index = (selection_cycle.find(editor.selected_mesh) + 1) % selection_cycle.size()
+		else:
+			selection_index = 0
+				
+		editor.selected_mesh = selection_cycle[selection_index]
+	else:
+		editor.selected_mesh = null
+	editor.refresh_viewports()
 
-# ToolSystem.gd - handle_move
 func handle_move(event: InputEvent) -> void:
 	if editor.selected_mesh == null:
 		return
@@ -113,9 +135,7 @@ func handle_move(event: InputEvent) -> void:
 		# Redraw viewport
 		editor.refresh_viewports()
 
-
 func handle_create(event : InputEvent) -> void:
-	
 	# early exit
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.is_pressed():
@@ -154,7 +174,6 @@ func handle_create(event : InputEvent) -> void:
 		editor.selected_mesh.set_axes(viewport, new_axes)
 		
 		editor.refresh_viewports()
-		
 
 func handle_scale(event : InputEvent) -> void:
 	if editor.selected_mesh == null:
@@ -192,22 +211,6 @@ func handle_scale(event : InputEvent) -> void:
 		# Redraw viewport
 		editor.refresh_viewports()
 
-func find_mesh(world_position : Vector2) -> GraphMesh:
-	for mesh in editor.level_data.data:
-		var rect: Rect2
-		
-		match viewport.orientation:
-			viewport.Orientations.TOP:
-				rect = mesh.get_top_view_rect()
-			viewport.Orientations.SIDE:
-				rect = mesh.get_side_view_rect()
-			viewport.Orientations.FRONT:
-				rect = mesh.get_front_view_rect()
-		
-		if rect.has_point(world_position):
-			return mesh
-	return null
-
 func get_handle_under_mouse(mouse_pos: Vector2) -> Dictionary:
 	var mesh : GraphMesh = editor.selected_mesh
 	if not mesh:
@@ -225,7 +228,7 @@ func get_handle_under_mouse(mouse_pos: Vector2) -> Dictionary:
 	var handle_size : int = 12
 	var offset : float = 2.5
 	
-	# Edge points in local space
+	# Edge points in world units
 	var left = rect.position + Vector2(0, rect.size.y / 2) - Vector2(offset,0)
 	var right = rect.position + Vector2(rect.size.x, rect.size.y / 2) + Vector2(offset,0)
 	var top = rect.position + Vector2(rect.size.x / 2, 0) - Vector2(0,offset)
@@ -250,6 +253,34 @@ func get_handle_under_mouse(mouse_pos: Vector2) -> Dictionary:
 			return {"name": axes, "rect": handles[axes]}
 	
 	return {}
+
+func find_meshes_sorted(world_pos: Vector2) -> Array:
+	var hits : Array = []
+	
+	for mesh in editor.level_data.data:
+		var rect : Rect2
+		var depth : float
+		
+		match viewport.orientation:
+			viewport.Orientations.TOP:
+				rect = mesh.get_top_view_rect()
+				depth = (mesh.y_range.x + mesh.y_range.y) / 2.0
+			viewport.Orientations.FRONT:
+				rect = mesh.get_front_view_rect()
+				depth = (mesh.z_range.x + mesh.z_range.y) / 2.0
+			viewport.Orientations.SIDE:
+				rect = mesh.get_side_view_rect()
+				depth = (mesh.x_range.x + mesh.x_range.y) / 2.0
+		
+		if rect.has_point(world_pos):
+			hits.append({"mesh": mesh, "depth": depth})
+	
+	# Sort by depth — you can flip < to > depending on whether you want “front-most” first or last
+	hits.sort_custom(func(a, b):
+		return a["depth"] < b["depth"]
+	)
+	
+	return hits
 
 
 func set_tool(mode: ToolMode) -> void:
