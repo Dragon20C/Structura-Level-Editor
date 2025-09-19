@@ -16,6 +16,8 @@ var drag_start_world : Vector2
 var create_start_world : Vector2
 var create_end_world : Vector2
 var active_axis : Axes
+# Add next to press_pos / press_mesh etc.
+var create_pending : bool = false
 
 var selection_cycle : Array = []
 var selection_index : int = 0
@@ -45,54 +47,124 @@ var drag_threshold := 4.0
 var is_dragging := false
 
 func handle_select(event: InputEvent) -> void:
+	# Only care about left mouse interactions for select/create start
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
+			# record press info
 			press_pos = event.position
-			press_mesh = editor.selected_mesh
 			is_dragging = false
-		else:
-			# Mouse released
-			if not is_dragging:
-				# treat as a click
-				_process_click(event.position)
-			# reset
+			create_pending = false
 			press_mesh = null
 
+			# compute world pos and test handles/hits immediately on press
+			var world_pos : Vector2 = editor.to_world(event.position, viewport._camera_position, viewport._zoom)
+
+			# if over a handle -> go straight to SCALE mode (priority)
+			var handle = get_handle_under_mouse(event.position)
+			if not handle.is_empty():
+				active_axis = handle["name"]
+				set_tool(ToolMode.SCALE)
+				return
+
+			# collect meshes under the cursor (sorted by depth)
+			var hits = find_meshes_sorted(world_pos)
+
+			if hits.size() > 0:
+				# store the top hit under the cursor for potential drag
+				press_mesh = hits[0]["mesh"]
+				# NOTE: we do NOT change selection yet; selection happens on click (mouse release)
+				# but we do set up selection_cycle so click will cycle properly later
+				var hit_meshes = hits.map(func(x): return x["mesh"])
+				if selection_cycle != hit_meshes:
+					selection_cycle = hit_meshes
+					selection_index = 0
+			else:
+				# nothing hit: prepare to create. We will actually create on drag (or on click release)
+				create_pending = true
+				if editor.snapping:
+					create_start_world = editor.snap_world(world_pos)
+				else:
+					create_start_world = world_pos
+
+		else:
+			# Mouse released
+			# If the user didn't drag, treat as a click
+			if not is_dragging:
+				# If we had a create pending (pressed on empty space) we want to create a new mesh
+				# immediately (with minimum size) and enter SELECT (or keep CREATE briefly)
+				_process_click(event.position)
+			# reset press state
+			press_mesh = null
+			create_pending = false
+
 	elif event is InputEventMouseMotion and event.button_mask & MOUSE_BUTTON_MASK_LEFT != 0:
+		# If movement exceeds threshold, treat as drag
 		if not is_dragging and press_pos.distance_to(event.position) > drag_threshold:
 			is_dragging = true
+
+			# If we pressed on an existing mesh and it's the currently selected mesh -> start move
 			if press_mesh and press_mesh == editor.selected_mesh:
-				# start move
-				var world_pos = editor.to_world(event.position, viewport._camera_position, viewport._zoom)
+				var world_pos : Vector2 = editor.to_world(event.position, viewport._camera_position, viewport._zoom)
 				drag_start_world = world_pos
 				set_tool(ToolMode.MOVE)
+				return
 
+			# If we pressed empty space and creation is pending -> create a new mesh and start CREATE mode
+			if create_pending and press_mesh == null:
+				# Make new mesh and select it
+				var new_mesh : GraphMesh = GraphMesh.new()
+				editor.level_data.add_mesh(new_mesh)
+				editor.selected_mesh = new_mesh
+
+				# ensure create_start_world is set (it was set on press)
+				# switch to CREATE mode so handle_create handles the drag resizing
+				set_tool(ToolMode.CREATE)
+				editor.refresh_viewports()
+				return
 
 func _process_click(mouse_pos: Vector2) -> void:
 	var world_pos : Vector2 = editor.to_world(mouse_pos, viewport._camera_position, viewport._zoom)
+
+	# Handle scale handle click first
 	var handle = get_handle_under_mouse(mouse_pos)
 	if not handle.is_empty():
 		active_axis = handle["name"]
 		set_tool(ToolMode.SCALE)
 		return
-	
+
+	# find meshes under the mouse
 	var hits = find_meshes_sorted(world_pos)
 	if hits.size() > 0:
-		# if the current selected mesh is in the cycle → go to next
-		if selection_cycle != hits.map(func(x): return x["mesh"]):
-			# reset cycle if meshes under mouse changed
-			selection_cycle = hits.map(func(x): return x["mesh"])
+		# cycle selection among the meshes under cursor
+		var hit_meshes = hits.map(func(x): return x["mesh"])
+		if selection_cycle != hit_meshes:
+			selection_cycle = hit_meshes
 			selection_index = 0
-				
+
 		if editor.selected_mesh and editor.selected_mesh in selection_cycle:
 			selection_index = (selection_cycle.find(editor.selected_mesh) + 1) % selection_cycle.size()
 		else:
 			selection_index = 0
-				
+
 		editor.selected_mesh = selection_cycle[selection_index]
+		editor.refresh_viewports()
+		return
+
+	# nothing hit -> CLICK on empty space: create a new mesh and enter CREATE mode so user can drag to size
+	var new_mesh : GraphMesh = GraphMesh.new()
+	editor.level_data.add_mesh(new_mesh)
+	editor.selected_mesh = new_mesh
+
+	# set up create_start_world (snap if enabled)
+	if editor.snapping:
+		create_start_world = editor.snap_world(world_pos)
 	else:
-		editor.selected_mesh = null
+		create_start_world = world_pos
+
+	# Enter CREATE mode; user can immediately drag to resize
+	set_tool(ToolMode.CREATE)
 	editor.refresh_viewports()
+
 
 func handle_move(event: InputEvent) -> void:
 	if editor.selected_mesh == null:
