@@ -34,8 +34,10 @@ func _has_main_screen():
 
 
 func _make_visible(visible):
+	
 	if structura_editor:
 		structura_editor.visible = visible
+		get_editor_interface().distraction_free_mode = visible
 
 
 func _get_plugin_name():

@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://dlty2bwyj3nd7"]
+
+[ext_resource type="FontFile" uid="uid://gpkexih8ki4e" path="res://addons/structura/assets/font/DIN.ttf" id="1_x2bm8"]
+
+[resource]
+default_font = ExtResource("1_x2bm8")
+default_font_size = 18
