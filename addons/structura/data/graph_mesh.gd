@@ -2,9 +2,9 @@
 extends Resource
 class_name GraphMesh
 
-@export var x_range: Vector2 = Vector2(-5, 5)  # x_min = x_range.x, x_max = x_range.y
-@export var y_range: Vector2 = Vector2(-5, 5)  # y_min = y_range.x, y_max = y_range.y
-@export var z_range: Vector2 = Vector2(-5, 5)  # z_min = z_range.x, z_max = z_range.y
+@export var x_range: Vector2 = Vector2(0, 8)  # x_min = x_range.x, x_max = x_range.y
+@export var y_range: Vector2 = Vector2(0, 8)  # y_min = y_range.x, y_max = y_range.y
+@export var z_range: Vector2 = Vector2(0, 8)  # z_min = z_range.x, z_max = z_range.y
 
 func get_size() -> Vector3:
 	return Vector3(x_range.y - x_range.x,

@@ -1,0 +1,141 @@
+[gd_resource type="Resource" script_class="LevelData" load_steps=25 format=3 uid="uid://cwhs8v4i87trt"]
+
+[ext_resource type="Script" uid="uid://dnvbrug2tldry" path="res://addons/structura/data/graph_mesh.gd" id="1_cxwqo"]
+[ext_resource type="Script" uid="uid://d4nqbqrdhfvnp" path="res://addons/structura/data/level_data.gd" id="2_kjoy0"]
+
+[sub_resource type="Resource" id="Resource_aray5"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-24, 24)
+y_range = Vector2(0, 8)
+z_range = Vector2(-24, 24)
+
+[sub_resource type="Resource" id="Resource_k3eev"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(24, 48)
+y_range = Vector2(0, 8)
+z_range = Vector2(-8, 8)
+
+[sub_resource type="Resource" id="Resource_u0hpc"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(48, 56)
+y_range = Vector2(0, 8)
+z_range = Vector2(-32, 8)
+
+[sub_resource type="Resource" id="Resource_6rehw"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(32, 64)
+y_range = Vector2(0, 8)
+z_range = Vector2(-56, -32)
+
+[sub_resource type="Resource" id="Resource_60uyb"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-48, -24)
+y_range = Vector2(0, 8)
+z_range = Vector2(8, 16)
+
+[sub_resource type="Resource" id="Resource_36tkl"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-56, -48)
+y_range = Vector2(0, 8)
+z_range = Vector2(-16, 16)
+
+[sub_resource type="Resource" id="Resource_831i7"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-80, -48)
+y_range = Vector2(0, 8)
+z_range = Vector2(-24, -16)
+
+[sub_resource type="Resource" id="Resource_2wdav"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-88, -80)
+y_range = Vector2(0, 8)
+z_range = Vector2(-56, -16)
+
+[sub_resource type="Resource" id="Resource_rj5np"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-80, -16)
+y_range = Vector2(0, 8)
+z_range = Vector2(-56, -48)
+
+[sub_resource type="Resource" id="Resource_dac36"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-24, 32)
+y_range = Vector2(0, 8)
+z_range = Vector2(-48, -40)
+
+[sub_resource type="Resource" id="Resource_wp7t5"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-8, 0)
+y_range = Vector2(0, 8)
+z_range = Vector2(24, 48)
+
+[sub_resource type="Resource" id="Resource_juomm"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-64, 0)
+y_range = Vector2(0, 8)
+z_range = Vector2(48, 56)
+
+[sub_resource type="Resource" id="Resource_kr8sl"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-96, -64)
+y_range = Vector2(0, 8)
+z_range = Vector2(32, 64)
+
+[sub_resource type="Resource" id="Resource_lerhp"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-88, -80)
+y_range = Vector2(0, 8)
+z_range = Vector2(8, 32)
+
+[sub_resource type="Resource" id="Resource_gnjst"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-112, -88)
+y_range = Vector2(0, 8)
+z_range = Vector2(8, 16)
+
+[sub_resource type="Resource" id="Resource_hidg5"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-120, -112)
+y_range = Vector2(0, 8)
+z_range = Vector2(-24, 16)
+
+[sub_resource type="Resource" id="Resource_kaaiy"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-104, -88)
+y_range = Vector2(0, 8)
+z_range = Vector2(-32, -24)
+
+[sub_resource type="Resource" id="Resource_afcwo"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-64, -56)
+y_range = Vector2(0, 8)
+z_range = Vector2(-88, -56)
+
+[sub_resource type="Resource" id="Resource_k6k6q"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-80, -40)
+y_range = Vector2(0, 8)
+z_range = Vector2(-112, -88)
+
+[sub_resource type="Resource" id="Resource_061i0"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-112, -80)
+y_range = Vector2(0, 8)
+z_range = Vector2(-96, -88)
+
+[sub_resource type="Resource" id="Resource_s1ems"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-112, -104)
+y_range = Vector2(0, 8)
+z_range = Vector2(-88, -48)
+
+[sub_resource type="Resource" id="Resource_bpdv6"]
+script = ExtResource("1_cxwqo")
+x_range = Vector2(-136, -104)
+y_range = Vector2(0, 8)
+z_range = Vector2(-48, -24)
+
+[resource]
+script = ExtResource("2_kjoy0")
+data = Array[ExtResource("1_cxwqo")]([SubResource("Resource_aray5"), SubResource("Resource_k3eev"), SubResource("Resource_u0hpc"), SubResource("Resource_6rehw"), SubResource("Resource_60uyb"), SubResource("Resource_36tkl"), SubResource("Resource_831i7"), SubResource("Resource_2wdav"), SubResource("Resource_rj5np"), SubResource("Resource_dac36"), SubResource("Resource_wp7t5"), SubResource("Resource_juomm"), SubResource("Resource_kr8sl"), SubResource("Resource_lerhp"), SubResource("Resource_gnjst"), SubResource("Resource_hidg5"), SubResource("Resource_kaaiy"), SubResource("Resource_afcwo"), SubResource("Resource_k6k6q"), SubResource("Resource_061i0"), SubResource("Resource_s1ems"), SubResource("Resource_bpdv6")])
+metadata/_custom_type_script = "uid://d4nqbqrdhfvnp"

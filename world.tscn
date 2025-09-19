@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://dnsh1bsnh2loi"]
+
+[ext_resource type="Script" uid="uid://dqlb6otqx2hhb" path="res://addons/structura/level_builder/level_builder.gd" id="1_f3sb7"]
+[ext_resource type="Resource" uid="uid://cwhs8v4i87trt" path="res://World_1.tres" id="2_fj7yv"]
+
+[node name="World" type="Node3D"]
+
+[node name="LevelBuilder3D" type="Node3D" parent="."]
+script = ExtResource("1_f3sb7")
+level_data = ExtResource("2_fj7yv")
+metadata/_custom_type_script = "uid://dqlb6otqx2hhb"

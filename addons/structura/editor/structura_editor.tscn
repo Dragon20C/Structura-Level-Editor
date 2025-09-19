@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://s2grr1g5wylc" path="res://addons/structura/editor/structura_editor.gd" id="1_wwam6"]
 [ext_resource type="Script" uid="uid://bie1sp8h3dmc8" path="res://addons/structura/graph_viewport/graph_viewport.gd" id="2_6cu81"]
-[ext_resource type="Resource" uid="uid://baf1tslvjaw58" path="res://Level_1Data.tres" id="2_r8jvi"]
+[ext_resource type="Resource" uid="uid://baf1tslvjaw58" path="res://addons/structura/DefaultLevelData.tres" id="2_r8jvi"]
 [ext_resource type="Script" uid="uid://dj43u5rb141sg" path="res://addons/structura/Coordinates/coordinates.gd" id="3_eltl8"]
 [ext_resource type="Theme" uid="uid://dlty2bwyj3nd7" path="res://addons/structura/assets/Theme.tres" id="3_kvgj1"]
 [ext_resource type="FontFile" uid="uid://gpkexih8ki4e" path="res://addons/structura/assets/font/DIN.ttf" id="4_vi1xm"]
@@ -77,6 +77,12 @@ custom_minimum_size = Vector2(40, 32)
 layout_mode = 2
 theme = ExtResource("3_kvgj1")
 text = "Delete mesh"
+
+[node name="LoadLevel" type="Button" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(40, 32)
+layout_mode = 2
+theme = ExtResource("3_kvgj1")
+text = "Load level data"
 
 [node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -260,6 +266,7 @@ vertical_alignment = 1
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/+Grid" to="." method="_on_plus_grid_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/Snap" to="." method="_on_snap_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/Delete" to="." method="_on_delete_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/LoadLevel" to="." method="_on_load_level_pressed"]
 [connection signal="item_rect_changed" from="VBoxContainer/GridContainer/Top" to="VBoxContainer/GridContainer/Top" method="_on_item_rect_changed"]
 [connection signal="item_rect_changed" from="VBoxContainer/GridContainer/Side" to="VBoxContainer/GridContainer/Side" method="_on_item_rect_changed"]
 [connection signal="item_rect_changed" from="VBoxContainer/GridContainer/Front" to="VBoxContainer/GridContainer/Front" method="_on_item_rect_changed"]
